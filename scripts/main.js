@@ -1,44 +1,38 @@
-// jQuery replacement functions
-function $(elemStr)
+String.prototype.trim = function()
 {
-	$nodeList = document.querySelectorAll(elemStr);
-	if ($nodeList.length == 1)
-		return $nodeList.item(0);
-	else
-		return $nodeList;
+	var result = this.replace(/[\r\n\s\t]/g, "");
+	return result;
 }
 
+jQuery.fn.innerText = function() {
+    return $(this)  .clone()
+            .children()
+            .remove()
+            .end()
+            .text()
+            .trim();
+};
+
 function slideDown(listItem) {
-	console.log("sliding down: " + listItem.textContent);
-	var nextItem = listItem.nextElementSibling;
-	if (nextItem !== null) {
-		//listItem.slideDown(400);
+	console.log("sliding down: " + listItem.text());
+	var nextItem = listItem.next();
+	if (nextItem.is("li")) {
+		listItem.slideDown(400);
 		window.setTimeout(slideDown, 200, nextItem);
 	} else {
-		//listItem.slideDown(400);
+		listItem.slideDown(400);
 	}
 };
 
 function slideUp(listItem) {
-	console.log("sliding up: " + listItem.textContent);
-	var nextItem = listItem.nextElementSibling;
-	if (nextItem !== null) {
-		//listItem.slideUp(400);
+	console.log("sliding up: " + listItem.text());
+	var nextItem = listItem.next();
+	if (nextItem.is("li")) {
+		listItem.slideUp(400);
 		window.setTimeout(slideUp, 200, nextItem);
 	} else {
-		//listItem.slideUp(400);
+		listItem.slideUp(400);
 	}
-};
-
-HTMLElement.prototype.css = function(property, value)
-{
-	if (value == undefined)
-		return window.getComputedStyle(this, '').getPropertyValue(property);
-		
-	var propertyName = property.replace(/\-\w/g, function(match) {
-		return match.charAt(1).toUpperCase();
-	});
-	this.style[propertyName] = value;
 };
 
 // foreach utility method to iterate through nodelist
@@ -48,23 +42,17 @@ NodeList.prototype.foreach = function(callback)
 		callback(this.item(i), i, this);
 };
 
-/*String.prototype.trim = function()
-{
-	var result = this.replace(/[\r\n\s\t]/g, "");
-	return result;
-}*/
-
 // ensures that the footer is at the bottom of the screen
 // even if the html content is shorter than the screen height
 function moveFooterToBottom() {
 	var $html = $('html'),
 		$body = $('body'),
 		$footer = $('footer');
-		htmlHeight = $html.offsetHeight,
+		htmlHeight = $html.height(),
 		footerTop = parseInt($footer.css("margin-top")),
 		diff = window.innerHeight - htmlHeight,
 		add = (diff > 0) ? diff + 1: 0;
-	$html.style.height = (htmlHeight + add) + "px";
+	$html.height(htmlHeight + add);
 	$footer.css("margin-top", (footerTop + add) + "px");
 }
 
@@ -77,63 +65,40 @@ function addBars() {
 	console.log($('content').childNodes);
 };
 
-document.addEventListener('DOMContentLoaded', function() {
+$(document).ready(function() {
 	// hide all main header submenus
-	$('nav ul li ul li').foreach(function(item) {
-		item.style.display = "none";
+	$('nav ul li ul li').each(function() {
+		$(this).hide();
 	});
 	
 	// initialize and draw to the canvas
 	artist = CreateArtist(document.getElementById('mainCanvas'));
 	artist.init();
 
-	$('nav > ul > li').foreach(
-		function(item) {
-			var name = item.innerText;
-			console.log("foreach " + name);
-			item.addEventListener("mouseover", function() {
-				console.log("mouseover: " + name);
-				if (item.childElementCount > 0)
-				{
-					var subList = item.children.item(0);
-					if (subList.childElementCount > 0)
-					{
-						var firstSubListItem = subList.children.item(0);
-						console.log(firstSubListItem.innerText);
-						subList.style.display = "block";
-						slideDown(firstSubListItem);
-					}
-				}
-			});
-			item.addEventListener("click", function() {
-				console.log("clicked: " + name);
-				artist.switchToWedge(name);
-			});
-			item.addEventListener("mouseout", function() {
-				console.log("mouseout: " + name);
-				if (item.childElementCount > 0)
-				{
-					var subList = item.children.item(0);
-					if (subList.childElementCount > 0)
-					{
-						var firstSubListItem = subList.children.item(0);
-						console.log(firstSubListItem.innerText);
-						subList.style.display = "block";
-						slideUp(firstSubListItem);
-					}
-				}
-				//slideUp(item.find('ul > li').item(0))
-			});
-		}
-	);
+	$('nav > ul > li').each(function() {
+		var item = $(this);
+		var name = item.innerText();
+		item.mouseover(function() {
+			console.log("mouseover: " + name);
+			slideDown(item.find("ul > li").first());
+		});
+		item.click(function() {
+			console.log("clicked: " + name);
+			artist.switchToWedge(name);
+		});
+		item.mouseout(function() {
+			console.log("mouseout: " + name);
+			slideUp(item.find('ul > li').first())
+		});	
+	});
 	
 	moveFooterToBottom();
 	
 	$content = $('#content');
 	
-	$('#masthead').addEventListener("click", function()
+	$('#masthead').click(function()
 	{
-		//$content.hide(1000, function() { $content.empty(); });
+		$content.hide(1000, function() { $content.empty(); });
 		artist.switchFromWedge();
 		moveFooterToBottom();
 	});
