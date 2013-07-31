@@ -59,10 +59,9 @@ function moveFooterToBottom() {
 window.addEventListener("resize", function() { moveFooterToBottom() });
 
 function addBars() {
-	$cb = $('content').find('#contentblock'); //.add("<div id='bar'/>");
-	console.log($('content'));
-	console.log($cb);
-	console.log($('content').childNodes);
+	$('content').find('#contentblock').each(function() {
+		$(this).before("<div id='bar' />");
+	});
 };
 
 $(document).ready(function() {
@@ -74,27 +73,43 @@ $(document).ready(function() {
 	// initialize and draw to the canvas
 	artist = CreateArtist(document.getElementById('mainCanvas'));
 	artist.init();
+	
+	$content = $('#content');
 
 	$('nav > ul > li').each(function() {
 		var item = $(this);
 		var name = item.innerText();
 		item.mouseover(function() {
 			console.log("mouseover: " + name);
-			slideDown(item.find("ul > li").first());
+			var firstItem = item.find("ul > li").first();
+			if (firstItem.is("li"))
+				slideDown(firstItem);
 		});
 		item.click(function() {
 			console.log("clicked: " + name);
-			artist.switchToWedge(name);
+			if (name !== "About")
+				artist.switchToWedge(name);
+			$content.slideUp(300);
+			$content.load('about.html');
+			var contentStyle = {
+				display: 'block',
+				width: '800px',
+				marginLeft: 'auto',
+				marginRight: 'auto'
+			};
+			$content.css(contentStyle);
+			addBars();
+			$content.slideDown(500);
 		});
 		item.mouseout(function() {
 			console.log("mouseout: " + name);
-			slideUp(item.find('ul > li').first())
+			var firstItem = item.find("ul > li").first();
+			if (firstItem.is("li"))
+				slideUp(firstItem);
 		});	
 	});
 	
 	moveFooterToBottom();
-	
-	$content = $('#content');
 	
 	$('#masthead').click(function()
 	{

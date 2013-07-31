@@ -180,7 +180,7 @@ var CreateArtist = function(canvasElement) {
 		if (typeof activeWedge !== "undefined")
 			timer = setInterval(function() { revert(); }, updateInterval);
 	}
-  
+
   return {
     init: init,
     switchToWedge: switchToWedge,

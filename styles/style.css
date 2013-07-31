@@ -87,23 +87,31 @@ img {
 	margin-right: auto;
 }
 
-#contentblock {
+.contentblock {
 	border: 40px solid black;
 	padding: 20px;
-	margin: 50px 0 0;
 }
 
-#contentblock p {
+.contentblock p {
 	font-family: Corbel;
+}
+
+#bar {
+	display: block;
+	background: black;
+	width: 40px;
+	height: 60px;
+	margin-left: auto;
+	margin-right: auto;
 }
 
 .about {
 	color: #b3b3b3;
 }
 
-.about p {
+p.about {
 	color: black;
-	background-color: #e5ff80;
+	background-color: #b3b3b3;
 	display: inline-block;
 	padding: 15px;
 }
