@@ -96,13 +96,26 @@ img {
 	font-family: Corbel;
 }
 
-#bar {
+.bar {
 	display: block;
 	background: black;
 	width: 40px;
 	height: 60px;
+}
+
+.bar : first-child {
 	margin-left: auto;
 	margin-right: auto;
+}
+
+.bar : nth-child(2n+3) {
+	position: relative;
+	left: 200px;
+}
+
+.bar : nth-child(2n+2) {
+	position: relative;
+	right: 200px;
 }
 
 .about {

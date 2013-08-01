@@ -90,16 +90,30 @@ $(document).ready(function() {
 			if (name !== "About")
 				artist.switchToWedge(name);
 			$content.slideUp(300);
-			$content.load('about.html');
-			var contentStyle = {
-				display: 'block',
-				width: '800px',
-				marginLeft: 'auto',
-				marginRight: 'auto'
-			};
-			$content.css(contentStyle);
-			addBars();
-			$content.slideDown(500);
+			$content.load('about.html', function() {
+				var contentStyle = {
+					display: 'block',
+					width: '800px',
+					marginLeft: 'auto',
+					marginRight: 'auto'
+				};
+				$content.css(contentStyle);
+				addBars();
+				$('.bar').each(function(index) {
+					var barStyle = new Object();
+					if (index > 0)
+					{
+						if (index % 2 == 0)
+							barStyle = { position: "relative", left: "200px" };
+						else
+							barStyle = { position: "relative", right: "200px" };
+					}
+					barStyle.marginLeft = "auto";
+					barStyle.marginRight = "auto";
+					$(this).css(barStyle);
+				});
+				$content.slideDown(500);
+			});
 		});
 		item.mouseout(function() {
 			console.log("mouseout: " + name);
